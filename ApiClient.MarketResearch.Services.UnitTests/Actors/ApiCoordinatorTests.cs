@@ -29,8 +29,6 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
         [Fact]
         public void test()
         {
-            // https://www.thecodebuzz.com/unit-test-mock-httpclientfactory-moq-net-core/
-
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
             mockHttpMessageHandler
                 .Protected()
