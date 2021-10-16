@@ -4,6 +4,7 @@ using System.Linq;
 using Akka.Actor;
 using ApiClient.MarketResearch.Services.Actors;
 using ApiClient.MarketResearch.Services.Models;
+using Object = ApiClient.MarketResearch.Services.Models.Object;
 
 namespace ApiClient.MarketResearch.Services {
     public class Makelaar : IMakelaar {
@@ -11,14 +12,14 @@ namespace ApiClient.MarketResearch.Services {
 
         public async void RequestMakelaarData(int pageSize)
         {
-            IEnumerable<Models.Object> objects = await SystemActors.ApiClient.Ask(new Actors.ApiClient.SearchObjects(), TimeSpan.FromMinutes(1))
+            IEnumerable<Object> objects = await SystemActors.ApiClient.Ask(new ApiCoordinator.SearchObjects(pageSize), TimeSpan.FromSeconds(30))
                 .ContinueWith(task =>
                 {
                     var result = task.Result;
                     return result switch
                     {
-                        IEnumerable<Models.Object> objects => new List<Models.Object>(objects),
-                        _ => new List<Models.Object>()
+                        IEnumerable<Object> objects => new List<Object>(objects),
+                        _ => new List<Object>()
                     };
                 });
 

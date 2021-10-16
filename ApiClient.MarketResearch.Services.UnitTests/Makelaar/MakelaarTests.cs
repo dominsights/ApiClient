@@ -29,7 +29,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar {
                  async () =>
                 {
                     makelaarService.RequestMakelaarData(20);
-                    testProbe.ExpectMsg<Actors.ApiClient.SearchObjects>();
+                    testProbe.ExpectMsg<Services.Actors.ApiCoordinator.SearchObjects>();
                     testProbe.Reply(new List<Models.Object>(_fixture.ObjectsObtained));
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 });
@@ -51,7 +51,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar {
                 async () =>
                 {
                     makelaarService.RequestMakelaarData(20);
-                    testProbe.ExpectMsg<Actors.ApiClient.SearchObjects>();
+                    testProbe.ExpectMsg<Services.Actors.ApiCoordinator.SearchObjects>();
                     testProbe.Reply(new Status.Failure(new Exception()));
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 });
