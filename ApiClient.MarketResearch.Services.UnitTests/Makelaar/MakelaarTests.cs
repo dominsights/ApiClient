@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Xunit;
 using Akka.TestKit.Xunit2;
 using ApiClient.MarketResearch.Services.Actors;
@@ -31,6 +34,26 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar {
 
             testProbe.ExpectMsg<Actors.ApiClient.SearchObjects>();
             testProbe.Reply(new List<Models.Object>(_fixture.ObjectsObtained));
+            Assert.True(_eventIsFired);
+        }
+        
+        [Fact]
+        public void Should_fire_event_when_status_is_failure()
+        {
+            var testProbe = CreateTestProbe();
+            SystemActors.ApiClient = testProbe;
+            
+            var makelaarService = new Services.Makelaar();
+            makelaarService.RequestMakelaarData(20);
+            makelaarService.OnMakelaarDataReceived += makelaars =>
+            {
+                Assert.False(makelaars.Any());
+                _eventIsFired = true;
+                return Task.CompletedTask;
+            };
+
+            testProbe.ExpectMsg<Actors.ApiClient.SearchObjects>();
+            testProbe.Reply(new Status.Failure(new Exception()));
             Assert.True(_eventIsFired);
         }
     }
