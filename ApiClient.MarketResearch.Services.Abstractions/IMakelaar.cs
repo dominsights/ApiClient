@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace ApiClient.MarketResearch.Services.Makelaar {
+namespace ApiClient.MarketResearch.Services {
 
     public delegate Task OnMessageReceivedHandler(IEnumerable<Models.Makelaar> makelaars);
     public interface IMakelaar {
