@@ -1,5 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Object = ApiClient.MarketResearch.Services.Models.Object;
 
 namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar
 {
@@ -20,6 +22,12 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar
                 new(9, "Makelaar 9", 12),
                 new(10, "Makelaar 10", 11)
             };
+
+            const int makelaarSize = 20;
+            ObjectsObtained = Enumerable.Range(0, makelaarSize)
+                .SelectMany(i => Enumerable.Range(0, makelaarSize - i)
+                    .OrderByDescending(_ => _)
+                    .Select(_ => new Models.Object(Guid.NewGuid(), i + 1, $"Makelaar {i + 1}")));
         }
 
         public IEnumerable<Models.Makelaar> ExpectedTop10Makelaars { get; }

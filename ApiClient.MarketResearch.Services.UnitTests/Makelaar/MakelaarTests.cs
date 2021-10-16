@@ -21,7 +21,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar {
             SystemActors.ApiClient = testProbe;
             
             var makelaarService = new Services.Makelaar();
-            makelaarService.RequestMakelaarData();
+            makelaarService.RequestMakelaarData(20);
             makelaarService.OnMakelaarDataReceived += makelaars =>
             {
                 Assert.Equal(_fixture.ExpectedTop10Makelaars, makelaars);
