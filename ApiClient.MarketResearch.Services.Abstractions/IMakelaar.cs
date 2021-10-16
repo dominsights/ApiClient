@@ -1,11 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ApiClient.MarketResearch.Services.Models;
 
 namespace ApiClient.MarketResearch.Services {
-
-    public delegate Task OnMessageReceivedHandler(IEnumerable<Models.Makelaar> makelaars);
     public interface IMakelaar {
-        event OnMessageReceivedHandler OnMakelaarDataReceived;
+        event EventHandler<MakelaarDataReceivedEventArgs> OnMakelaarDataReceived;
         void RequestMakelaarData(int pageSize);
     }
 }
