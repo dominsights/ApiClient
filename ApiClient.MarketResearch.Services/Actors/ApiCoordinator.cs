@@ -12,8 +12,10 @@ namespace ApiClient.MarketResearch.Services.Actors
         {
             Receive<SearchObjects>(_ =>
             {
-                var httpClient = httpClientFactory.CreateClient();
-                var response = httpClient.GetAsync("https://localhost:44364/account");
+                var httpClient1 = httpClientFactory.CreateClient();
+                var httpClient2 = httpClientFactory.CreateClient();
+                var response1 = httpClient1.GetAsync("https://localhost:44364/account");
+                var response2 = httpClient2.GetAsync("https://localhost:44364/account");
             });
         }
     }

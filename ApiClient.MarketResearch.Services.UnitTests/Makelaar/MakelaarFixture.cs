@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Object = ApiClient.MarketResearch.Services.Models.Object;
+using ApiClient.MarketResearch.Services.Facade;
 
 namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar
 {
     public class MakelaarFixture
     {
+        public IEnumerable<Models.Makelaar> ExpectedTop10Makelaars { get; }
+        public IEnumerable<Models.Object> ObjectsObtained { get; }
+        public SearchResult ApiResult { get; }
+        public const int PageSize = 20;
+
         public MakelaarFixture()
         {
             ExpectedTop10Makelaars = new List<Models.Makelaar>()
@@ -24,13 +29,23 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar
             };
 
             const int makelaarSize = 20;
-            ObjectsObtained = Enumerable.Range(0, makelaarSize)
+            // Creates a list of tuples with the expected values and the values returned by the api
+            var mockObjects = Enumerable.Range(0, makelaarSize)
                 .SelectMany(i => Enumerable.Range(0, makelaarSize - i)
                     .OrderByDescending(_ => _)
-                    .Select(_ => new Models.Object(Guid.NewGuid(), i + 1, $"Makelaar {i + 1}")));
-        }
+                    .Select(_ =>
+                    {
+                        var objectId = Guid.NewGuid();
+                        int makelaarId = i + 1;
+                        string makelaarNaam = $"Makelaar {makelaarId}";
+                        return (new Models.Object(objectId, makelaarId, makelaarNaam), new Facade.Object { Id = objectId.ToString(), MakelaarId = makelaarId, MakelaarNaam = makelaarNaam});
+                    }));
 
-        public IEnumerable<Models.Makelaar> ExpectedTop10Makelaars { get; }
-        public IEnumerable<Models.Object> ObjectsObtained { get; }
+            ObjectsObtained = mockObjects.Select(x => x.Item1);
+
+            var apiObjects = mockObjects.Select(x => x.Item2);
+            int aantalPagines = (int)Math.Ceiling((double) apiObjects.Count() / PageSize);
+            ApiResult = new SearchResult() { Objects = apiObjects.ToList(), Paging = new Paging { AantalPaginas = aantalPagines } };
+        }
     }
 }
