@@ -8,22 +8,31 @@ namespace ApiClient.MarketResearch.Services.Actors
     {
         public record QueryData(string QueryFilters, int Page, int PageSize);
         
-        private readonly ApiClientFacade _apiClientFacade;
+        private readonly ISearchApi _searchApi;
 
-        public ApiWorker(ApiClientFacade apiClientFacade)
+        public ApiWorker(ISearchApi searchApi)
         {
-            _apiClientFacade = apiClientFacade;
+            _searchApi = searchApi;
         }
         
         protected override void OnReceive(object message)
         {
             switch (message)
             {
-                case QueryData query: throw new NotImplementedException();
+                case QueryData query:
+                    try
+                    {
+                        var objects = _searchApi.SearchApi(query.Page, query.PageSize, query.QueryFilters);
+                        Sender.Tell(objects);
+                    }
+                    catch(Exception e)
+                    {
+                        //TODO: Implement retry
+                        Sender.Tell(new Status.Failure(e));
+                    }
+                    break;
                 default: throw new NotSupportedException();
             }
-            
-            throw new System.NotImplementedException();
         }
     }
 }

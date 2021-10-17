@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -48,6 +49,21 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
             subject.Tell(new ApiWorker.QueryData("type=koop&zo=/amsterdam/tuin", page, PageSize));
             var objects = ExpectMsg<IEnumerable<Models.Object>>();
             Assert.Equal(_fixture.ObjectsObtained.Skip(skip).Take(20), objects);
+        }
+
+        [Fact]
+        public void Should_return_status_failure_when_api_fails()
+        {
+            var mockSearchApi = new Mock<ISearchApi>();
+            mockSearchApi
+                .Setup(m => m.SearchApi(It.IsAny<int>(), 
+                    It.IsAny<int>(), 
+                    It.IsAny<string>()))
+                .Throws(new Exception());
+            
+            var subject = Sys.ActorOf(Props.Create(() => new ApiWorker(mockSearchApi.Object)));
+            subject.Tell(new ApiWorker.QueryData("type=koop&zo=/amsterdam/tuin", 1, PageSize));
+            ExpectMsg<Status.Failure>();
         }
         
         private int count = 0;

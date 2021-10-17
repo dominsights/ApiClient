@@ -4,7 +4,7 @@ using System.Net.Http;
 
 namespace ApiClient.MarketResearch.Services.Facade
 {
-    public class ApiClientFacade
+    public class ApiClientFacade : ISearchApi
     {
         private readonly HttpClient _httpClient;
 
@@ -12,7 +12,7 @@ namespace ApiClient.MarketResearch.Services.Facade
         {
             _httpClient = httpClient;
         }
-        public IEnumerable<Models.Object> SearchApi(int page, int pageSize)
+        public IEnumerable<Models.Object> SearchApi(int page, int pageSize, string queryFilters)
         {
             throw new NotImplementedException();
         }
