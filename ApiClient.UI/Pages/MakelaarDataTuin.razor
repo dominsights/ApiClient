@@ -1,8 +1,7 @@
-@page "/makelaardata"
+@page "/makelaardatatuin"
 @using ApiClient.MarketResearch.Services
 
 @using Models = ApiClient.MarketResearch.Services.Models
-@using System.Diagnostics
 @inject IMakelaar _makelaarService
 
 <h1>Makelaar Data</h1>
@@ -45,7 +44,7 @@ else
             StateHasChanged();
         };
         
-        _makelaarService.RequestMakelaarData(25, "type=koop&zo=/amsterdam");
+        _makelaarService.RequestMakelaarData(25, "type=koop&zo=/amsterdam/tuin");
     }
 
 }

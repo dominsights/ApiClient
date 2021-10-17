@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.DI.Extensions.DependencyInjection;
 using ApiClient.MarketResearch.Services;
 using ApiClient.MarketResearch.Services.Actors;
 using ApiClient.MarketResearch.Services.Facade;
@@ -31,7 +32,7 @@ namespace ApiClient.UI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddServerSideBlazor();
+            services.AddServerSideBlazor().AddCircuitOptions(options => {  options.DetailedErrors = true; });
             services.AddSingleton<WeatherForecastService>();
 
             var key = Configuration["apiKey"];
@@ -40,6 +41,8 @@ namespace ApiClient.UI
             services.AddHttpClient();
             services.AddTransient<IMakelaar, Makelaar>();
             services.AddTransient<ISearchApi, ApiClientFacade>();
+            services.AddTransient<ApiCoordinatorFactory>();
+            services.AddTransient<ApiCoordinator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,7 +72,8 @@ namespace ApiClient.UI
 
             var searchApi = app.ApplicationServices.GetRequiredService<ISearchApi>();
             var actorSystem = ActorSystem.Create("apiclient");
-            SystemActors.ApiClient = actorSystem.ActorOf(Props.Create(() => new ApiCoordinator(searchApi)));
+            actorSystem.UseServiceProvider(app.ApplicationServices);
+            ActorSystemRefs.ActorSystem = actorSystem;
         }
     }
 }

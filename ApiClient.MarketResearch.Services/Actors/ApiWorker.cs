@@ -1,5 +1,6 @@
 using System;
 using Akka.Actor;
+using Akka.Event;
 
 namespace ApiClient.MarketResearch.Services.Actors
 {
@@ -10,6 +11,7 @@ namespace ApiClient.MarketResearch.Services.Actors
         public record QueryFailed(int Page, Exception Exception);
         
         private readonly ISearchApi _searchApi;
+        private readonly ILoggingAdapter _log = Logging.GetLogger(Context);
 
         public ApiWorker(ISearchApi searchApi)
         {
@@ -23,6 +25,7 @@ namespace ApiClient.MarketResearch.Services.Actors
                 case ExecuteQuery(var queryFilters, var page, var pageSize):
                     try
                     {
+                        _log.Info($"[ExecuteQuery] page: {page}");
                         var objects = _searchApi.SearchApi(page, pageSize, queryFilters);
                         Sender.Tell(objects);
                     }

@@ -38,9 +38,9 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar
 
             ObjectsObtained = mockObjects;
 
-            var apiObjects = mockObjects.Select(x => new Facade.Object { Id = x.Id.ToString(), MakelaarId = x.MakelaarId, MakelaarNaam = x.MakelaarNaam} ).ToList();
+            var apiObjects = mockObjects.Select(x => new Facade.Object { Id = x.Id, MakelaarId = x.MakelaarId, MakelaarNaam = x.MakelaarNaam} ).ToList();
             int aantalPagines = (int)Math.Ceiling((double) apiObjects.Count() / PageSize);
-            ApiResult = new SearchResult() { Objects = apiObjects.ToList(), Paging = new Paging { AantalPaginas = aantalPagines } };
+            ApiResult = new SearchResult() { Objects = apiObjects.ToArray(), Paging = new Paging { AantalPaginas = aantalPagines } };
         }
     }
 }

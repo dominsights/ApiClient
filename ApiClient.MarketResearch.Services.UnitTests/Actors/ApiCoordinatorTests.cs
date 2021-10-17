@@ -68,7 +68,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
                 int skip = pageSize * _count;
                 var newObjects = searchResult.Objects.Skip(skip).Take(pageSize);
                 _count++;
-                return searchResult with {Objects = newObjects.ToList(), Paging = searchResult.Paging with { HuidigePagina = _count}};
+                return searchResult with {Objects = newObjects.ToArray(), Paging = searchResult.Paging with { HuidigePagina = _count}};
             }
         }
     }

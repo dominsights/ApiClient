@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <Content Remove="keys.json" />
+    <Content Remove="Pages\Counter.razor" />
+    <Content Remove="Pages\FetchData.razor" />
   </ItemGroup>
 
   <PropertyGroup>
