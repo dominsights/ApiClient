@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -28,7 +27,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
         }
         
         [Fact]
-        public void test()
+        public void Should_return_expected_makelaar_data_when_api_result_is_ok()
         {
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
             mockHttpMessageHandler
@@ -37,7 +36,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
                 .ReturnsAsync(() => new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Content = JsonContent.Create(MockApiResults(_fixture.ApiResult, MakelaarFixture.PageSize)) //TODO: return only 20 for each request
+                    Content = JsonContent.Create(MockApiResults(_fixture.ApiResult, MakelaarFixture.PageSize))
                 });
 
             var client = new HttpClient(mockHttpMessageHandler.Object);
@@ -54,8 +53,8 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
         /// <summary>
         /// Tries to mock the pagination from server side.
         /// </summary>
-        /// <param name="searchResult"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="searchResult">All objects expected to return from server side.</param>
+        /// <param name="pageSize">Page size to simulate multiple pages.</param>
         /// <returns></returns>
         private SearchResult MockApiResults(SearchResult searchResult, int pageSize)
         {
