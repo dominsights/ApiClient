@@ -38,7 +38,9 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar
                         var objectId = Guid.NewGuid();
                         int makelaarId = i + 1;
                         string makelaarNaam = $"Makelaar {makelaarId}";
-                        return (new Models.Object(objectId, makelaarId, makelaarNaam), new Facade.Object { Id = objectId.ToString(), MakelaarId = makelaarId, MakelaarNaam = makelaarNaam});
+                        var expectedObject = new Models.Object(objectId, makelaarId, makelaarNaam);
+                        var objectApiResult = new Facade.Object { Id = objectId.ToString(), MakelaarId = makelaarId, MakelaarNaam = makelaarNaam};
+                        return (expectedObject, objectApiResult);
                     }));
 
             ObjectsObtained = mockObjects.Select(x => x.Item1);
