@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using Akka.Actor;
 using Akka.Routing;
 using Akka.Util.Internal;
-using Object = ApiClient.MarketResearch.Services.Models.Object;
 
 namespace ApiClient.MarketResearch.Services.Actors
 {
