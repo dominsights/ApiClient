@@ -19,10 +19,10 @@ namespace ApiClient.MarketResearch.Services.Actors
         {
             switch (message)
             {
-                case QueryData query:
+                case QueryData(var queryFilters, var page, var pageSize):
                     try
                     {
-                        var objects = _searchApi.SearchApi(query.Page, query.PageSize, query.QueryFilters);
+                        var objects = _searchApi.SearchApi(page, pageSize, queryFilters);
                         Sender.Tell(objects);
                     }
                     catch(Exception e)
