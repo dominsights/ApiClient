@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -42,11 +41,13 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
                 });
             
             var client = new HttpClient(mockHttpMessageHandler.Object);
-            var apiFacade = new ApiClientFacade(client, "key", "https://validurl.org");
+            var mockFactory = new Mock<IHttpClientFactory>();
+            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            var apiFacade = new ApiClientFacade(mockFactory.Object, "key", "https://validurl.org");
             var subject = Sys.ActorOf(Props.Create(() => new ApiWorker(apiFacade)));
-            subject.Tell(new ApiWorker.QueryData("type=koop&zo=/amsterdam/tuin", page, PageSize));
-            var objects = ExpectMsg<IEnumerable<Models.Object>>();
-            Assert.Equal(_fixture.ObjectsObtained.Skip(skip).Take(20), objects);
+            subject.Tell(new ApiWorker.ExecuteQuery("type=koop&zo=/amsterdam/tuin", page, PageSize));
+            var queryResult = ExpectMsg<QueryResult>();
+            Assert.Equal(_fixture.ObjectsObtained.Skip(skip).Take(20), queryResult.Objects);
         }
 
         [Fact]
@@ -60,7 +61,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
                 .Throws(new Exception());
             
             var subject = Sys.ActorOf(Props.Create(() => new ApiWorker(mockSearchApi.Object)));
-            subject.Tell(new ApiWorker.QueryData("type=koop&zo=/amsterdam/tuin", 1, PageSize));
+            subject.Tell(new ApiWorker.ExecuteQuery("type=koop&zo=/amsterdam/tuin", 1, PageSize));
             ExpectMsg<Status.Failure>();
         }
         

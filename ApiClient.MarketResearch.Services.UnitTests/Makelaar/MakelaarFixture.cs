@@ -11,6 +11,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar
         public IEnumerable<Models.Object> ObjectsObtained { get; }
         public SearchResult ApiResult { get; }
         public const int PageSize = 20;
+        public const string QueryFilters = "type=koop&zo=/amsterdam/tuin";
 
         public MakelaarFixture()
         {

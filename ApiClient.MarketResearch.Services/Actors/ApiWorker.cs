@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Akka.Actor;
 using ApiClient.MarketResearch.Services.Facade;
 
@@ -6,7 +7,7 @@ namespace ApiClient.MarketResearch.Services.Actors
 {
     public class ApiWorker : UntypedActor
     {
-        public record QueryData(string QueryFilters, int Page, int PageSize);
+        public record ExecuteQuery(string QueryFilters, int Page, int PageSize);
         
         private readonly ISearchApi _searchApi;
 
@@ -19,7 +20,7 @@ namespace ApiClient.MarketResearch.Services.Actors
         {
             switch (message)
             {
-                case QueryData(var queryFilters, var page, var pageSize):
+                case ExecuteQuery(var queryFilters, var page, var pageSize):
                     try
                     {
                         var objects = _searchApi.SearchApi(page, pageSize, queryFilters);

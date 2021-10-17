@@ -7,6 +7,7 @@ using Xunit;
 using Akka.TestKit.Xunit2;
 using ApiClient.MarketResearch.Services.Actors;
 using ApiClient.MarketResearch.Services.Models;
+using static ApiClient.MarketResearch.Services.UnitTests.Makelaar.MakelaarFixture;
 
 namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar {
     public class MakelaarTests : TestKit, IClassFixture<MakelaarFixture> {
@@ -28,7 +29,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar {
                 h => makelaarService.OnMakelaarDataReceived -= h,
                  async () =>
                 {
-                    makelaarService.RequestMakelaarData(20);
+                    makelaarService.RequestMakelaarData(PageSize, QueryFilters);
                     testProbe.ExpectMsg<Services.Actors.ApiCoordinator.SearchObjects>();
                     testProbe.Reply(new List<Models.Object>(_fixture.ObjectsObtained));
                     await Task.Delay(TimeSpan.FromSeconds(1));
@@ -44,13 +45,13 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar {
             SystemActors.ApiClient = testProbe;
             
             var makelaarService = new Services.Makelaar();
-            makelaarService.RequestMakelaarData(20);
+            makelaarService.RequestMakelaarData(PageSize, QueryFilters);
             
             var result = await Assert.RaisesAsync<MakelaarDataReceivedEventArgs>(h => makelaarService.OnMakelaarDataReceived += h,
                 h => makelaarService.OnMakelaarDataReceived -= h,
                 async () =>
                 {
-                    makelaarService.RequestMakelaarData(20);
+                    makelaarService.RequestMakelaarData(PageSize, QueryFilters);
                     testProbe.ExpectMsg<Services.Actors.ApiCoordinator.SearchObjects>();
                     testProbe.Reply(new Status.Failure(new Exception()));
                     await Task.Delay(TimeSpan.FromSeconds(1));

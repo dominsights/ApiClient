@@ -29,7 +29,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
         [Fact]
         public void Should_return_expected_makelaar_data_when_api_result_is_ok()
         {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>(); //TODO: move to fixture
             mockHttpMessageHandler
                 .Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
@@ -42,9 +42,11 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
             var client = new HttpClient(mockHttpMessageHandler.Object);
             var mockFactory = new Mock<IHttpClientFactory>();
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            var apiFacade = new ApiClientFacade(mockFactory.Object, "key", "https://validurl.org");
+
+            var subject = Sys.ActorOf(Props.Create(() => new ApiCoordinator(apiFacade)));
+            subject.Tell(new ApiCoordinator.SearchObjects(MakelaarFixture.PageSize, "type=koop&zo=/amsterdam/tuin"));
             
-            var subject = Sys.ActorOf(Props.Create(() => new ApiCoordinator(mockFactory.Object)));
-            subject.Tell(new ApiCoordinator.SearchObjects(MakelaarFixture.PageSize));
             var objects = ExpectMsg<IEnumerable<Object>>();
             Assert.Equal(_fixture.ObjectsObtained, objects);
         }
@@ -56,7 +58,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
         /// <param name="searchResult">All objects expected to return from server side.</param>
         /// <param name="pageSize">Page size to simulate multiple pages.</param>
         /// <returns></returns>
-        private SearchResult MockApiResults(SearchResult searchResult, int pageSize)
+        private SearchResult MockApiResults(SearchResult searchResult, int pageSize) //TODO: move to fixture
         {
             int skip = pageSize * count;
             var newObjects = searchResult.Objects.Skip(skip).Take(pageSize);

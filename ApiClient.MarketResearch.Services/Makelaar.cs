@@ -10,9 +10,9 @@ namespace ApiClient.MarketResearch.Services {
     public class Makelaar : IMakelaar {
         public event EventHandler<MakelaarDataReceivedEventArgs> OnMakelaarDataReceived;
 
-        public async void RequestMakelaarData(int pageSize)
+        public async void RequestMakelaarData(int pageSize, string queryFilters)
         {
-            IEnumerable<Object> objects = await SystemActors.ApiClient.Ask(new ApiCoordinator.SearchObjects(pageSize), TimeSpan.FromSeconds(30))
+            IEnumerable<Object> objects = await SystemActors.ApiClient.Ask(new ApiCoordinator.SearchObjects(pageSize, queryFilters), TimeSpan.FromSeconds(30))
                 .ContinueWith(task =>
                 {
                     var result = task.Result;
