@@ -26,13 +26,11 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
         {
             _fixture = fixture;
         }
-        
-        [Theory]
-        [InlineData(0,1)]
-        [InlineData(20,2)]
-        public void Should_return_data_accordingly_to_page(int skip, int page)
+
+        [Fact]
+        public void Should_return_data_accordingly_to_page()
         {
-            // check url is well formed?
+            int skip = 0, page = 1;
             var mockHttpMessageHandler = new Mock<HttpMessageHandler>(); //TODO: move to fixture
             mockHttpMessageHandler
                 .Protected()
@@ -42,9 +40,9 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
                     StatusCode = HttpStatusCode.OK,
                     Content = JsonContent.Create(MockApiResults(_fixture.ApiResult, PageSize))
                 });
-
+            
             var client = new HttpClient(mockHttpMessageHandler.Object);
-            var apiFacade = new ApiClientFacade(client);
+            var apiFacade = new ApiClientFacade(client, "key", "https://validurl.org");
             var subject = Sys.ActorOf(Props.Create(() => new ApiWorker(apiFacade)));
             subject.Tell(new ApiWorker.QueryData("type=koop&zo=/amsterdam/tuin", page, PageSize));
             var objects = ExpectMsg<IEnumerable<Models.Object>>();

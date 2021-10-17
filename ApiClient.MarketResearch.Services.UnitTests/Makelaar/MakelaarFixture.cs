@@ -29,23 +29,15 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Makelaar
             };
 
             const int makelaarSize = 20;
-            // Creates a list of tuples with the expected values and the values returned by the api
             var mockObjects = Enumerable.Range(0, makelaarSize)
                 .SelectMany(i => Enumerable.Range(0, makelaarSize - i)
                     .OrderByDescending(_ => _)
-                    .Select(_ =>
-                    {
-                        var objectId = Guid.NewGuid();
-                        int makelaarId = i + 1;
-                        string makelaarNaam = $"Makelaar {makelaarId}";
-                        var expectedObject = new Models.Object(objectId, makelaarId, makelaarNaam);
-                        var objectApiResult = new Facade.Object { Id = objectId.ToString(), MakelaarId = makelaarId, MakelaarNaam = makelaarNaam};
-                        return (expectedObject, objectApiResult);
-                    }));
+                    .Select(_ => new Models.Object(Guid.NewGuid(), i + 1, $"Makelaar {i + 1}")))
+                .ToList();
 
-            ObjectsObtained = mockObjects.Select(x => x.Item1);
+            ObjectsObtained = mockObjects;
 
-            var apiObjects = mockObjects.Select(x => x.Item2);
+            var apiObjects = mockObjects.Select(x => new Facade.Object { Id = x.Id.ToString(), MakelaarId = x.MakelaarId, MakelaarNaam = x.MakelaarNaam} ).ToList();
             int aantalPagines = (int)Math.Ceiling((double) apiObjects.Count() / PageSize);
             ApiResult = new SearchResult() { Objects = apiObjects.ToList(), Paging = new Paging { AantalPaginas = aantalPagines } };
         }
