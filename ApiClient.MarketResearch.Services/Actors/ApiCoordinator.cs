@@ -12,6 +12,12 @@ namespace ApiClient.MarketResearch.Services.Actors
         {
             Receive<SearchObjects>(_ =>
             {
+                // execute first query
+                // get page count
+                // execute all other queries - 1 in parallel
+                // group data and return
+                // implement retry if time is enough
+                
                 var httpClient1 = httpClientFactory.CreateClient();
                 var httpClient2 = httpClientFactory.CreateClient();
                 var response1 = httpClient1.GetAsync("https://localhost:44364/account");
