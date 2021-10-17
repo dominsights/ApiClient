@@ -14,6 +14,7 @@ using Xunit;
 using Moq;
 using Moq.Protected;
 using Object = ApiClient.MarketResearch.Services.Models.Object;
+using FluentAssertions;
 
 namespace ApiClient.MarketResearch.Services.UnitTests.Actors
 {
@@ -46,12 +47,14 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
 
             var subject = Sys.ActorOf(Props.Create(() => new ApiCoordinator(apiFacade)));
             subject.Tell(new ApiCoordinator.SearchObjects(MakelaarFixture.PageSize, "type=koop&zo=/amsterdam/tuin"));
-            
+
             var objects = ExpectMsg<IEnumerable<Object>>();
-            Assert.Equal(_fixture.ObjectsObtained, objects);
+            // Assert
+            _fixture.ObjectsObtained.Should().BeEquivalentTo(objects);
         }
 
         private int count = 0;
+        private object myLock = new object();
         /// <summary>
         /// Tries to mock the pagination from server side.
         /// </summary>
@@ -60,10 +63,13 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
         /// <returns></returns>
         private SearchResult MockApiResults(SearchResult searchResult, int pageSize) //TODO: move to fixture
         {
-            int skip = pageSize * count;
-            var newObjects = searchResult.Objects.Skip(skip).Take(pageSize);
-            count++;
-            return searchResult with {Objects = newObjects.ToList(), Paging = searchResult.Paging with { HuidigePagina = count}};
+            lock (myLock)
+            {
+                int skip = pageSize * count;
+                var newObjects = searchResult.Objects.Skip(skip).Take(pageSize);
+                count++;
+                return searchResult with {Objects = newObjects.ToList(), Paging = searchResult.Paging with { HuidigePagina = count}};
+            }
         }
     }
 }

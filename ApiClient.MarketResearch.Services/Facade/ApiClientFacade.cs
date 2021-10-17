@@ -26,7 +26,7 @@ namespace ApiClient.MarketResearch.Services.Facade
             var content = result.Content.ReadAsStringAsync().Result;
             var deserialized = JsonConvert.DeserializeObject<SearchResult>(content); 
             var objects = deserialized.Objects.Select(o => new Models.Object(Guid.Parse(o.Id), o.MakelaarId, o.MakelaarNaam));
-            return new QueryResult(deserialized.Paging.AantalPaginas, objects);
+            return new QueryResult(deserialized.Paging.AantalPaginas, objects, page);
         }
     }
 }

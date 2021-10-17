@@ -8,6 +8,8 @@ namespace ApiClient.MarketResearch.Services.Actors
     public class ApiWorker : UntypedActor
     {
         public record ExecuteQuery(string QueryFilters, int Page, int PageSize);
+
+        public record QueryFailed(int Page, Exception Exception);
         
         private readonly ISearchApi _searchApi;
 
@@ -29,7 +31,7 @@ namespace ApiClient.MarketResearch.Services.Actors
                     catch(Exception e)
                     {
                         //TODO: Implement retry
-                        Sender.Tell(new Status.Failure(e));
+                        Sender.Tell(new QueryFailed(page, e));
                     }
                     break;
                 default: throw new NotSupportedException();
