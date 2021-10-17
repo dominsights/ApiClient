@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Akka.Actor;
+using ApiClient.MarketResearch.Services;
+using ApiClient.MarketResearch.Services.Actors;
+using ApiClient.MarketResearch.Services.Facade;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +33,13 @@ namespace ApiClient.UI
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+
+            var key = Configuration["apiKey"];
+            var url = Configuration["apiUrl"];
+            services.AddSingleton(new ApiConfig(key, url));
+            services.AddHttpClient();
+            services.AddTransient<IMakelaar, Makelaar>();
+            services.AddTransient<ISearchApi, ApiClientFacade>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +66,10 @@ namespace ApiClient.UI
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+            var searchApi = app.ApplicationServices.GetRequiredService<ISearchApi>();
+            var actorSystem = ActorSystem.Create("apiclient");
+            SystemActors.ApiClient = actorSystem.ActorOf(Props.Create(() => new ApiCoordinator(searchApi)));
         }
     }
 }

@@ -43,7 +43,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
             var client = new HttpClient(mockHttpMessageHandler.Object);
             var mockFactory = new Mock<IHttpClientFactory>();
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
-            var apiFacade = new ApiClientFacade(mockFactory.Object, "key", "https://validurl.org");
+            var apiFacade = new ApiClientFacade(mockFactory.Object, new ApiConfig("key", "https://validurl.org"));
 
             var subject = Sys.ActorOf(Props.Create(() => new ApiCoordinator(apiFacade)));
             subject.Tell(new ApiCoordinator.SearchObjects(MakelaarFixture.PageSize, "type=koop&zo=/amsterdam/tuin"));
@@ -53,8 +53,8 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
             _fixture.ObjectsObtained.Should().BeEquivalentTo(objects);
         }
 
-        private int count = 0;
-        private object myLock = new object();
+        private int _count = 0;
+        private readonly object _myLock = new object();
         /// <summary>
         /// Tries to mock the pagination from server side.
         /// </summary>
@@ -63,12 +63,12 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
         /// <returns></returns>
         private SearchResult MockApiResults(SearchResult searchResult, int pageSize) //TODO: move to fixture
         {
-            lock (myLock)
+            lock (_myLock)
             {
-                int skip = pageSize * count;
+                int skip = pageSize * _count;
                 var newObjects = searchResult.Objects.Skip(skip).Take(pageSize);
-                count++;
-                return searchResult with {Objects = newObjects.ToList(), Paging = searchResult.Paging with { HuidigePagina = count}};
+                _count++;
+                return searchResult with {Objects = newObjects.ToList(), Paging = searchResult.Paging with { HuidigePagina = _count}};
             }
         }
     }

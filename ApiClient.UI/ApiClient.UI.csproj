@@ -5,8 +5,13 @@
     <ProjectReference Include="..\ApiClient.MarketResearch.Services.Abstractions\ApiClient.MarketResearch.Services.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="keys.json" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>3a45d942-b1c8-47d0-b38f-3799fd948db5</UserSecretsId>
   </PropertyGroup>
 
 </Project>

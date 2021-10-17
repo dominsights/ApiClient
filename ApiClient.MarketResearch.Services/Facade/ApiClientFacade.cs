@@ -11,11 +11,11 @@ namespace ApiClient.MarketResearch.Services.Facade
         private readonly string _apiKey;
         private readonly string _apiUrl;
 
-        public ApiClientFacade(IHttpClientFactory httpClientFactory, string apiKey, string apiUrl)
+        public ApiClientFacade(IHttpClientFactory httpClientFactory, ApiConfig apiConfig)
         {
             _httpClientFactory = httpClientFactory;
-            _apiKey = apiKey;
-            _apiUrl = apiUrl;
+            _apiKey = apiConfig.ApiKey;
+            _apiUrl = apiConfig.ApiUrl;
         }
         public QueryResult SearchApi(int page, int pageSize, string queryFilters)
         {

@@ -1,0 +1,23 @@
+@page "/makelaardata"
+@using ApiClient.MarketResearch.Services
+
+@using Models = ApiClient.MarketResearch.Services.Models
+@using System.Diagnostics
+@inject IMakelaar _makelaarService
+
+<h3>MakelaarData</h3>
+
+@code {
+    private Models.Makelaar[] _makelaars;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _makelaarService.OnMakelaarDataReceived += (sender, args) =>
+        {
+            Debugger.Break();
+        };
+        
+        _makelaarService.RequestMakelaarData(20, "type=koop&zo=/amsterdam/tuin");
+    }
+
+}

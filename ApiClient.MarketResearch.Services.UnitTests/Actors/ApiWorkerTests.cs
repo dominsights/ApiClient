@@ -43,7 +43,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
             var client = new HttpClient(mockHttpMessageHandler.Object);
             var mockFactory = new Mock<IHttpClientFactory>();
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
-            var apiFacade = new ApiClientFacade(mockFactory.Object, "key", "https://validurl.org");
+            var apiFacade = new ApiClientFacade(mockFactory.Object, new ApiConfig("key", "https://validurl.org"));
             var subject = Sys.ActorOf(Props.Create(() => new ApiWorker(apiFacade)));
             subject.Tell(new ApiWorker.ExecuteQuery("type=koop&zo=/amsterdam/tuin", page, PageSize));
             var queryResult = ExpectMsg<QueryResult>();
@@ -62,7 +62,7 @@ namespace ApiClient.MarketResearch.Services.UnitTests.Actors
             
             var subject = Sys.ActorOf(Props.Create(() => new ApiWorker(mockSearchApi.Object)));
             subject.Tell(new ApiWorker.ExecuteQuery("type=koop&zo=/amsterdam/tuin", 1, PageSize));
-            ExpectMsg<Status.Failure>();
+            ExpectMsg<ApiWorker.QueryFailed>();
         }
         
         private int count = 0;

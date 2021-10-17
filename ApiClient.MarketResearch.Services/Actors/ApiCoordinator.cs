@@ -12,7 +12,7 @@ namespace ApiClient.MarketResearch.Services.Actors
 
         private IEnumerable<Models.Object> _objects;
         private SearchObjects _search;
-        private List<int> _requests;
+        private readonly List<int> _requests;
         private IActorRef _sender;
 
         public ApiCoordinator(ISearchApi searchApi)

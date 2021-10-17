@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Akka.Actor;
-using ApiClient.MarketResearch.Services.Facade;
 
 namespace ApiClient.MarketResearch.Services.Actors
 {
